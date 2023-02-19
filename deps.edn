@@ -1,0 +1,10 @@
+{:paths ["src"]
+ :deps
+ {org.clojure/clojure {:mvn/version "1.10.1"}
+  clj-http/clj-http {:mvn/version "3.12.3"}
+  org.clojure/core.async {:mvn/version "1.6.673"}}
+ :aliases {:run
+           {:exec-fn main.yogasync/run
+            :exec-args nil}
+           :outdated {:extra-deps {olical/depot {:mvn/version "1.8.4"}}
+                      :main-opts  ["-m" "depot.outdated.main" "-a" "outdated"]}}}
