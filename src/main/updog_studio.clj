@@ -1,11 +1,12 @@
 (ns main.updog-studio
   (:require
    [cheshire.core :as cheshire]
-   [clj-http.client :as client])
+   [clj-http.client :as client]
+   [main.secrets :as secrets])
   (:import
-   (java.util Locale)
-   (java.time Instant ZoneId LocalDateTime)
-   (java.time.format DateTimeFormatter)))
+   (java.time Instant LocalDateTime ZoneId)
+   (java.time.format DateTimeFormatter)
+   (java.util Locale)))
 
 (defn convert-epoch-second-to-readable-time
   "Makes a readable string for the epoch fetched from Updog's API
@@ -15,6 +16,9 @@
     (->> (ZoneId/of "America/New_York")
          (LocalDateTime/ofInstant instant)
          (.format (DateTimeFormatter/ofPattern "hh:mm a" Locale/US)))))
+
+(defn convert-epoch-second-to-epoch-ms [epoch]
+  (* 1000 epoch))
 
 (def now (-> (Instant/now)
              .getEpochSecond))
@@ -27,11 +31,11 @@
   (client/get
    (format "https://api.glofox.com/2.0/events?end=%s&include=trainers,facility,program,users_booked&page=1&private=false&sort_by=time_start&start=%s" (str midnight) (str now))
    {:query-params {:start (str now)
-                   :end (str midnight)
+                   :end (str (+ now 43200)) ;12 hours until something better
                    :include "trainers"
                    :page "1"
                    :private "false"}
-    :headers {:authorization "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJfIiwiZXhwIjoxNjc5MjgyOTEwLCJpYXQiOjE2NzY4NjM3MTAsImlzcyI6Il8iLCJ1c2VyIjp7Il9pZCI6Imd1ZXN0IiwibmFtZXNwYWNlIjoidXBkb2dzdHVkaW9zIiwiYnJhbmNoX2lkIjoiNjIzZTM3ODJjY2I3MjUwNTQxMTc2M2U1IiwiZmlyc3RfbmFtZSI6Ikd1ZXN0IiwibGFzdF9uYW1lIjoiVXNlciIsInR5cGUiOiJHVUVTVCIsImlzU3VwZXJBZG1pbiI6ZmFsc2V9fQ.MBvC68CN9BjQF11WzRS5ZAQFh7LZNfmUE0eIf2C1-aM"
+    :headers {:authorization secrets/updog-auth-token
               :origin "https://app.glofox.com"}}))
 
 (def relevant-data
@@ -43,13 +47,7 @@
 (defn transform-keys [m]
   (into {} (map (fn [[k v]] [(keyword k) v]) m)))
 
-(defn filter-down-to-today [classes]
-  (filter (fn [m] (and (> now (get m "time_start"))
-                       (< midnight (get m "time_start"))))
-          classes))
-
 (->> relevant-data
-     filter-down-to-today
      (map transform-keys)
      (map (fn [m] (update m :trainers_obj (fn [t]
                                             (let [{:keys [first_name last_name]} (transform-keys (first t))]
@@ -57,5 +55,7 @@
      (map (fn [m] (assoc m
                          :teacher (:trainers_obj m)
                          :studio "Updog Studios"
+                         :epoch-ms (convert-epoch-second-to-epoch-ms (:time_start m))
                          :time (convert-epoch-second-to-readable-time (:time_start m)))))
-     (map (fn [m] (select-keys m [:studio :teacher :name :time]))))
+     (map (fn [m] (select-keys m [:epoch-ms :studio :teacher :name :time])))
+     (sort-by :epoch-ms))
