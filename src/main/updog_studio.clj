@@ -2,12 +2,19 @@
   (:require
    [cheshire.core :as cheshire]
    [clj-http.client :as client])
-  (:import (java.time Instant)))
+  (:import
+   (java.util Locale)
+   (java.time Instant ZoneId LocalDateTime)
+   (java.time.format DateTimeFormatter)))
 
 (defn convert-epoch-second-to-readable-time
-  "Makes a readable string epochSecond"
+  "Makes a readable string for the epoch fetched from Updog's API
+   Java interop is not so nice to read"
   [epoch]
-  (str (Instant/ofEpochSecond epoch)))
+  (let [instant (Instant/ofEpochSecond epoch)]
+    (->> (ZoneId/of "America/New_York")
+         (LocalDateTime/ofInstant instant)
+         (.format (DateTimeFormatter/ofPattern "hh:mm a" Locale/US)))))
 
 (def now
   (.getEpochSecond (Instant/now)))
