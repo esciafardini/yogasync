@@ -16,20 +16,21 @@
          (LocalDateTime/ofInstant instant)
          (.format (DateTimeFormatter/ofPattern "hh:mm a" Locale/US)))))
 
-(def now
-  (.getEpochSecond (Instant/now)))
+(def now (-> (Instant/now)
+             .getEpochSecond))
 
-(def midnight
-  (.getEpochSecond (.truncatedTo (Instant/now) (java.time.temporal.ChronoUnit/DAYS))))
+(def midnight (-> (Instant/now)
+                  (.truncatedTo (java.time.temporal.ChronoUnit/DAYS))
+                  .getEpochSecond))
 
 (defn get-updog-info []
   (client/get
    (format "https://api.glofox.com/2.0/events?end=%s&include=trainers,facility,program,users_booked&page=1&private=false&sort_by=time_start&start=%s" (str midnight) (str now))
-   {:query-params {:end "1678078799"
+   {:query-params {:start (str now)
+                   :end (str midnight)
                    :include "trainers"
                    :page "1"
-                   :private "false"
-                   :start "1676178000"}
+                   :private "false"}
     :headers {:authorization "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJfIiwiZXhwIjoxNjc5MjgyOTEwLCJpYXQiOjE2NzY4NjM3MTAsImlzcyI6Il8iLCJ1c2VyIjp7Il9pZCI6Imd1ZXN0IiwibmFtZXNwYWNlIjoidXBkb2dzdHVkaW9zIiwiYnJhbmNoX2lkIjoiNjIzZTM3ODJjY2I3MjUwNTQxMTc2M2U1IiwiZmlyc3RfbmFtZSI6Ikd1ZXN0IiwibGFzdF9uYW1lIjoiVXNlciIsInR5cGUiOiJHVUVTVCIsImlzU3VwZXJBZG1pbiI6ZmFsc2V9fQ.MBvC68CN9BjQF11WzRS5ZAQFh7LZNfmUE0eIf2C1-aM"
               :origin "https://app.glofox.com"}}))
 
