@@ -8,11 +8,11 @@
    [ring.logger :as logger]
    [yogasync.db :as db]))
 
-(defn create-user [_]
-  (fn [req]
-    (let [{:keys [username password teacher admin]} (get-in req [:body-params :user])]
-      (db/insert-user! username password teacher admin)
-      (res/response (str "create user " username)))))
+(defn create-user [req]
+  (let [{:keys [username password teacher admin]} (get req :body-params)
+        insert-count (-> (db/insert-user! username password teacher admin)
+                         first)]
+    (res/response (str "Created " insert-count " user: " username))))
 
 (defn get-users [_]
   (res/response (db/get-users)))
