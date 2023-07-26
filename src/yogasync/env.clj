@@ -4,8 +4,7 @@
 
 (def dbenv (->> (string/split (slurp ".env") #"\n")
                 (mapv (fn [s] (string/split s #"=")))
-                (mapv (fn [[k v]] [(keyword k) v]))
-                (into {})))
+                (reduce (fn [acc [k v]] (assoc acc (keyword k) v)) {})))
 
 (defn get-env-var [k]
   (or (get dbenv k) (System/getenv (name k))))
