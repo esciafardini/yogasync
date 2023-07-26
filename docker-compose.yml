@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  db:
+    container_name: yogasyncdb
+    image: postgres
+    ports:
+      - 8880:5432
+    environment:
+      POSTGRES_USER: ${POSTGRESUSER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DBNAME}
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+volumes:
+  init-db:

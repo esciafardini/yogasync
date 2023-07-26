@@ -17,16 +17,22 @@
 (defn get-users [_]
   (res/response (db/get-users)))
 
-(defn dynamic-path-param-ex [req]
-  (res/response (str "You requested to: " (get-in req [:path-params :something]))))
+(defn dynamic-path-param-example [req]
+  (res/response (str "You requested to: " (get-in req [:path-params :dynamic-arg]))))
+
+(defn redirect-example [req]
+  (let [q (get-in req [:path-params :q])
+        url (str "https://www.google.com/search?q=" q)]
+    (res/redirect url 307)))
 
 (def app
   (ring/ring-handler
    (ring/router
     [["/"
       ["" (fn [_req] {:body "it works" :status 200})]
-      [":something" dynamic-path-param-ex]]
+      ["redirect/:q" redirect-example]]
      ["/api"
+      ["/dynamic/:dynamic-arg" dynamic-path-param-example]
       ["/users" {:get get-users
                  :post create-user}]]]
     {:data {:muuntaja m/instance

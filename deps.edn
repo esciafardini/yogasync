@@ -3,9 +3,10 @@
         javax.servlet/servlet-api {:mvn/version "2.5"}
         metosin/muuntaja {:mvn/version "0.6.8"}
         metosin/reitit {:mvn/version "0.7.0-alpha5"}
-        mysql/mysql-connector-java {:mvn/version "8.0.29"}
+        migratus/migratus {:mvn/version "1.5.1"}
         org.clojure/clojure {:mvn/version "1.10.0"}
         org.clojure/java.jdbc {:mvn/version "0.7.12"}
+        org.postgresql/postgresql {:mvn/version "42.3.1"}
         ring/ring {:mvn/version "1.10.0"}
         ring-logger/ring-logger {:mvn/version "1.1.1"}}
  :aliases {:repl {:extra-deps {nrepl/nrepl {:mvn/version,"0.8.3"},cider/cider-nrepl {:mvn/version,"0.26.0"}}
