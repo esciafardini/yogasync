@@ -41,6 +41,12 @@
   (fetch {:select [:*]
           :from [:users]})
 
+  (fetch {:select [:*]
+          :from [:recurring_events]})
+
+  (fetch {:select [:*]
+          :from [:teachers]})
+
   (get-user-by-username "toddcage")
 
   (insert-user! "anotherone" "erjdhs" false false)
