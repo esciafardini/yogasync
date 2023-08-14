@@ -1,0 +1,19 @@
+{
+  "name": "yogasync",
+  "version": "1.0.0",
+  "description": "Since the pandemic, many yoga studios have been forced to close their doors.  Yoga teachers are doing classes in gyms or via zoom.  The goal of this application is to enable teachers to share their schedules with students in one place.  A student can open the app and see all of the Baltimore yoga classes happening during the week.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "shadow-cljs": "^2.25.2"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
