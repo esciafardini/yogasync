@@ -12,7 +12,6 @@
     (rdom/render [views/main-panel] root-el)))
 
 (defn ^:export init []
-  (js/console.log "HAHAHA")
   (re-frame/dispatch-sync [::events/initialize-db])
   (mount-root))
 
