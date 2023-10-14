@@ -1,4 +1,4 @@
 (ns yogasync.db)
 
 (def default-db
-  {:name "re-frame"})
+  {:app-name "YOGASYNC"})

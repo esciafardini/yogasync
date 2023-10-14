@@ -1,0 +1,13 @@
+
+.rainbow-text {
+  font-family: 'Arial', sans-serif;
+  font-size: 1.5rem;
+  background: linear-gradient(45deg, yellow, green, blue, violet);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  display: inline-block;
+  padding: 4px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
