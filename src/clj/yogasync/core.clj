@@ -5,8 +5,13 @@
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [ring.adapter.jetty :as ring-jetty]
    [ring.util.response :as res]
+   [ring.middleware.cors :refer [wrap-cors]]
    [ring.logger :as logger]
    [yogasync.db :as db]))
+
+(defn cors-handler [handler]
+  (wrap-cors handler :access-control-allow-origin [#"http://localhost:5003"]
+             :access-control-allow-methods [:get :put :post :delete]))
 
 (defn create-user [req]
   (let [{:keys [username password teacher admin]} (get req :body-params)
@@ -37,6 +42,7 @@
                  :post create-user}]]]
     {:data {:muuntaja m/instance
             :middleware [[muuntaja/format-middleware]
+                         [cors-handler]
                          [logger/wrap-with-logger {:request-keys (conj logger/default-request-keys :body-params :body :request-id)}]]}})))
 
 (defn start []
